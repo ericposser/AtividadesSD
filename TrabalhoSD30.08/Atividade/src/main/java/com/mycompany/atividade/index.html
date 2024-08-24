@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Calculadora WebSocket</title>
+        <script>
+            let ws;
+            function connect() {
+// Cria uma nova conexão WebSocket
+            ws = new WebSocket('ws://localhost:8080');
+// Evento disparado quando a conexão é aberta
+            ws.onopen = function() {
+            console.log('Conectado ao servidor WebSocket');
+            document.getElementById('status').textContent = 'Conectado ao servidor WebSocket';
+            };
+// Evento disparado quando uma mensagem é recebida do servidor
+            ws.onmessage = function(event) {
+            console.log('Mensagem do servidor:', event.data);
+            document.getElementById('response').textContent = 'Resposta do servidor: ' + event.data;
+            };
+// Evento disparado quando a conexão é fechada
+            ws.onclose = function() {
+            console.log('Conexão com o servidor WebSocket encerrada');
+            document.getElementById('status').textContent = 'Conexão com o servidor WebSocket encerrada';
+            };
+// Evento disparado quando ocorre um erro
+            ws.onerror = function(error) {
+            console.error('Erro na conexão WebSocket:', error);
+            };
+            }
+            function sendCalculation() {
+            if (!ws || ws.readyState !== WebSocket.OPEN) {
+            alert('Não está conectado ao servidor WebSocket');
+            return;
+            }
+// Obtém os valores do formulário
+            const opcao = document.getElementById('opcao').value;
+            const num1 = parseFloat(document.getElementById('num1').value);
+            const num2 = parseFloat(document.getElementById('num2').value);
+// Cria o objeto de requisição
+            const request = {
+            opcao: parseInt(opcao),
+                    num1: num1,
+                    num2: num2
+            };
+// Converte o objeto para JSON e envia para o servidor
+            ws.send(JSON.stringify(request));
+            }
+            function disconnect() {
+            if (ws) {
+            ws.close();
+            ws = null;
+            document.getElementById('status').textContent = 'Desconectado do servidor WebSocket';
+            }
+            }
+        </script>
+    </head>
+
+    <body>
+        <h1>Calculadora WebSocket</h1>
+        <div id="status">Desconectado</div>
+        <div>
+            <label for="opcao">Opção:</label>
+            <select id="opcao">
+                <option value="1">Soma</option>
+                <option value="2">Subtração</option>
+                <option value="3">Multiplicação</option>
+                <option value="4">Divisão</option>
+            </select>
+        </div>
+        <div>
+            <label for="num1">Número 1:</label>
+            <input type="number" id="num1" step="any">
+        </div>
+        <div>
+            <label for="num2">Número 2:</label>
+            <input type="number" id="num2" step="any">
+        </div>
+        <button onclick="connect()">Conectar</button>
+        <button onclick="sendCalculation()">Enviar Cálculo</button>
+        <button onclick="disconnect()">Desconectar</button>
+        <div id="response"></div>
+    </body>
+</html>
+
