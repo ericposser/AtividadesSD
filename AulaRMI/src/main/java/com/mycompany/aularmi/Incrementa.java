@@ -23,6 +23,9 @@ public class Incrementa extends UnicastRemoteObject implements IIncrementa {
     
     @Override
     public double sub(double x, double y) throws RemoteException{
+        if(x < b){
+            throw new ArithmeticException("erro");
+        }                
         return x - y;      
     }
     
@@ -33,6 +36,9 @@ public class Incrementa extends UnicastRemoteObject implements IIncrementa {
     
     @Override
     public double divisao(double x, double y) throws RemoteException{
+        if(y == 0){
+            throw new ArithmeticException("erro");
+        }
         return x / y;      
     }
 }
